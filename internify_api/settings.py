@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'job_listings',
     'debug_toolbar',
     'corsheaders',
+    'users',
 ]
 
 INTERNAL_IPS = [
@@ -145,3 +146,5 @@ REST_FRAMEWORK = {
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+AUTH_USER_MODEL = 'users.User'
