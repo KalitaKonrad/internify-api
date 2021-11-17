@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'rest_framework_simplejwt',
+    'account'
 ]
 
 INTERNAL_IPS = [
@@ -148,9 +149,20 @@ REST_FRAMEWORK = {
     )
 }
 
+# CORS START
+CSRF_COOKIE_SAMESITE = "Lax"
+SESSION_COOKIE_SAMESITE = "Lax"
+CSRF_COOKIE_HTTPONLY = True
+SESSION_COOKIE_HTTPONLY = True
+
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:3000",
 ]
+
+CORS_EXPOSE_HEADERS = ['Content-Type', 'X-CSRFToken']
+CORS_ALLOW_CREDENTIALS = True
+
+# CORS END
 
 AUTH_USER_MODEL = 'users.User'
 
