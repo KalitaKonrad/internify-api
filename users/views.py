@@ -3,13 +3,15 @@ from django.conf import settings
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework import generics, status
-from .serializers import RegisterSerializer
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
 from .models import User
-from .serializers import RegisterSerializer
+from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer
 from .utils import Util
+from drf_yasg.utils import swagger_auto_schema
+from drf_yasg import openapi
+from rest_framework import generics, status, views
 
 
 class RegisterView(generics.GenericAPIView):
@@ -40,11 +42,17 @@ class RegisterView(generics.GenericAPIView):
 
 
 class VerifyEmail(generics.GenericAPIView):
+    serializer_class = EmailVerificationSerializer
+    token_param_config = openapi.Parameter(
+        'token', in_=openapi.IN_QUERY, description='Description', type=openapi.TYPE_STRING)
+
+    @swagger_auto_schema(manual_parameters=[token_param_config])
     def get(self, request):
         token = request.GET.get('token')
 
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY)
+            payload = jwt.decode(
+                token, settings.SECRET_KEY, algorithms="HS256")
             user = User.objects.get(id=payload['user_id'])
 
             if not user.is_verified:
@@ -56,5 +64,16 @@ class VerifyEmail(generics.GenericAPIView):
         except jwt.ExpiredSignatureError as identifier:
             return Response({'error': 'Activation link has expired'}, status=status.HTTP_400_BAD_REQUEST)
 
-        except jwt.DecodeError as identifier:
+        except jwt.exceptions.DecodeError as identifier:
             return Response({'error': 'Invalid token'}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class LoginAPIView(generics.GenericAPIView):
+    serializer_class = LoginSerializer
+
+    def post(self, request):
+        user = request.data
+        serializer = self.serializer_class(data=user)
+        serializer.is_valid(raise_exception=True)
+
+        return Response(serializer.data, status=status.HTTP_200_OK)

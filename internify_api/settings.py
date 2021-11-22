@@ -50,6 +50,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'users',
     'rest_framework_simplejwt',
+    'drf_yasg',
 ]
 
 INTERNAL_IPS = [
