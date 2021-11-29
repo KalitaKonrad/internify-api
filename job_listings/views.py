@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from rest_framework import generics, status
+from rest_framework import generics, status, viewsets
 from .models import Job, Company
 from .serializers import JobSerializer, CompanySerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
@@ -24,10 +24,17 @@ class JobList(generics.ListCreateAPIView):
 
 
 class JobDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly, IsOwner,)
+
+    def get_permissions(self):
+        method = self.request.method
+        if method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return [IsAuthenticatedOrReadOnly(), IsOwner()]
+        else:
+            return [IsAuthenticatedOrReadOnly()]
+
     queryset = Job.jobobjects.all()  # only published jobssearch only published jobs
     serializer_class = JobSerializer
-    lookup_fields = 'id'
+    lookup_field = 'slug'
 
 
 class CompanyList(generics.ListCreateAPIView):
@@ -40,6 +47,14 @@ class CompanyList(generics.ListCreateAPIView):
 
 
 class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
-    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_permissions(self):
+        method = self.request.method
+        if method in ['POST', 'PUT', 'PATCH', 'DELETE']:
+            return [IsAuthenticatedOrReadOnly(), IsOwner()]
+        else:
+            return [IsAuthenticatedOrReadOnly()]
+
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    lookup_field = 'slug'
