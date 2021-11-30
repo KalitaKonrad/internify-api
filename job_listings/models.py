@@ -15,6 +15,7 @@ class Company(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     owner = models.OneToOneField(to=User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=250)
+    headquarters = models.CharField(max_length=100)
 
     class Meta:
         ordering = ('-establishment',)
@@ -47,6 +48,10 @@ class Job(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     company = models.ForeignKey(to=Company, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=250)
+    salary_min = models.IntegerField(blank=True, null=True)
+    salary_max = models.IntegerField(blank=True, null=True)
+    is_remote = models.BooleanField(default=False, blank=True, null=True)
+    experience = models.IntegerField()
 
     class Meta:
         ordering = ('-published',)

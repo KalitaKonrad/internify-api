@@ -20,7 +20,7 @@ class CompanySerializer(serializers.ModelSerializer):
     class Meta:
         model = Company
         fields = ('id', 'name', 'establishment',
-                  'website_url', 'owner', 'slug')
+                  'website_url', 'owner', 'slug', 'headquarters')
         read_only_fields = ['owner']
 
 
@@ -31,5 +31,6 @@ class JobSerializer(serializers.ModelSerializer):
     class Meta:
         model = Job
         fields = ('id', 'title', 'description', 'published',
-                  'is_active', 'updated_at', 'slug', 'company')
+                  'is_active', 'updated_at', 'slug', 'company',
+                  'salary_min', 'salary_max', 'is_remote', 'experience')
         read_only_fields = ['slug', 'company']
