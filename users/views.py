@@ -16,6 +16,8 @@ from .models import User
 from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, \
     ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer
 from .utils import Util
+from rest_framework.permissions import IsAuthenticated
+from job_listings.serializers import UserSerializer
 
 
 class RegisterView(generics.GenericAPIView):
@@ -137,3 +139,11 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
         serializer.is_valid(raise_exception=True)
 
         return Response({'success': True, 'message': 'Password reset success'}, status=status.HTTP_200_OK)
+
+
+class CurrentUserApiView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserSerializer
+
+    def get_object(self) -> User:
+        return self.request.user

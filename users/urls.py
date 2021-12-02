@@ -3,7 +3,7 @@ from .views import RegisterView, VerifyEmail, LoginAPIView
 from rest_framework_simplejwt.views import TokenRefreshView
 
 from .views import RegisterView, VerifyEmail, LoginAPIView, PasswordTokenCheckAPI, RequestPasswordResetEmail, \
-    SetNewPasswordAPIView
+    SetNewPasswordAPIView, CurrentUserApiView
 
 # app_name = 'users'
 
@@ -18,4 +18,5 @@ urlpatterns = [
          PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
     path('password-reset-complete', SetNewPasswordAPIView.as_view(),
          name='password-reset-complete'),
+    path('me/', CurrentUserApiView.as_view(), name='current-user')
 ]

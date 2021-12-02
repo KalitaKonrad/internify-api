@@ -16,6 +16,7 @@ class Company(models.Model):
     owner = models.OneToOneField(to=User, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=250)
     headquarters = models.CharField(max_length=100)
+    size = models.IntegerField()
 
     class Meta:
         ordering = ('-establishment',)
