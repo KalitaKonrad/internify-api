@@ -4,7 +4,7 @@ from .models import Job, Company
 from .serializers import JobSerializer, CompanySerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
-from .permissions import IsOwner
+from .permissions import IsJobOwner, IsCompanyOwner
 
 
 class JobList(generics.ListCreateAPIView):
@@ -28,7 +28,7 @@ class JobDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_permissions(self):
         method = self.request.method
         if method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            return [IsAuthenticatedOrReadOnly(), IsOwner()]
+            return [IsAuthenticatedOrReadOnly(), IsJobOwner()]
         else:
             return [IsAuthenticatedOrReadOnly()]
 
@@ -51,7 +51,7 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     def get_permissions(self):
         method = self.request.method
         if method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            return [IsAuthenticatedOrReadOnly(), IsOwner()]
+            return [IsAuthenticatedOrReadOnly(), IsCompanyOwner()]
         else:
             return [IsAuthenticatedOrReadOnly()]
 
