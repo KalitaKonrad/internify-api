@@ -34,3 +34,13 @@ class JobSerializer(serializers.ModelSerializer):
                   'is_active', 'updated_at', 'slug', 'company',
                   'salary_min', 'salary_max', 'is_remote', 'experience')
         read_only_fields = ['slug', 'company']
+
+
+class CompanyJobOffersSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Job
+        fields = ('id', 'title', 'description', 'published',
+                  'is_active', 'updated_at', 'slug', 'company',
+                  'salary_min', 'salary_max', 'is_remote', 'experience', 'company')
+        read_only_fields = ['owner', 'company']

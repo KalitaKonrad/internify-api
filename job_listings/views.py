@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics, status, viewsets
 from .models import Job, Company
-from .serializers import JobSerializer, CompanySerializer
+from .serializers import JobSerializer, CompanySerializer, CompanyJobOffersSerializer
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from .permissions import IsJobOwner, IsCompanyOwner
@@ -58,3 +58,13 @@ class CompanyDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
     lookup_field = 'slug'
+
+
+class JobListFiltered(generics.ListAPIView):
+    serializer_class = CompanyJobOffersSerializer
+    permission_classes = (IsAuthenticatedOrReadOnly,)
+
+    def get_queryset(self):
+
+        company_name = self.kwargs['company_name']
+        return Job.jobobjects.filter(company__slug=company_name)
