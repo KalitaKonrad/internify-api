@@ -73,7 +73,8 @@ class VerifyEmail(generics.GenericAPIView):
                 user.is_verified = True
                 user.save()
 
-            return Response({'email': 'Successfully activated'}, status=status.HTTP_200_OK)
+            return CustomRedirect(os.environ.get('FRONTEND_URL', ''))
+            # return Response({'email': 'Successfully activated'}, status=status.HTTP_200_OK)
 
         except jwt.ExpiredSignatureError as identifier:
             return Response({'error': 'Activation link has expired'}, status=status.HTTP_400_BAD_REQUEST)

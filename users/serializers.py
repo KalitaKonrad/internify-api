@@ -14,18 +14,25 @@ from .models import User
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=60, min_length=8, write_only=True)
+    user_type = serializers.CharField(
+        max_length=15, min_length=5, write_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'username', 'password']
+        fields = ['email', 'username', 'password', 'user_type']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
         username = attrs.get('username', '')
+        user_type = attrs.get('user_type', '')
 
         if not username.isalnum():
             raise serializers.ValidationError(
                 'Username should only contain alphanumeric characters')
+
+        if user_type not in ['is_company', 'is_employee']:
+            raise serializers.ValidationError(
+                'Wrong user type')
 
         return attrs
 
@@ -46,12 +53,14 @@ class LoginSerializer(serializers.ModelSerializer):
     password = serializers.CharField(
         max_length=50, min_length=1, write_only=True)
     username = serializers.CharField(max_length=255, read_only=True)
+    user_type = serializers.CharField(max_length=255, read_only=True)
+
     tokens = serializers.CharField(
         max_length=255, min_length=8, read_only=True)
 
     class Meta:
         model = User
-        fields = ['email', 'password', 'username', 'tokens']
+        fields = ['email', 'password', 'username', 'tokens', 'user_type']
 
     def validate(self, attrs):
         email = attrs.get('email', '')
@@ -68,6 +77,7 @@ class LoginSerializer(serializers.ModelSerializer):
         return {
             'email': user.email,
             'username': user.username,
+            'user_type': 'is_company' if user.is_company == True else 'is_employee',
             'tokens': user.tokens
         }
 

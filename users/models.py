@@ -9,24 +9,32 @@ from rest_framework_simplejwt.tokens import RefreshToken
 
 class UserManager(BaseUserManager):
 
-    def create_user(self, username, email, password=None):
+    def create_user(self, username, email, user_type, password=None):
         if username is None:
             raise TypeError('Username is empty')
         if email is None:
             raise TypeError('Email is empty')
+        if user_type is None:
+            raise TypeError('User type is empty')
 
         user = self.model(username=username, email=self.normalize_email(email))
+
+        if user_type == 'is_company':
+            user.is_company = True
+        else:
+            user.is_employee = True
+
         user.set_password(password)
         user.save()
         return user
 
-    def create_superuser(self, username, email, password=None):
+    def create_superuser(self, username, email, user_type, password=None):
         if password is None:
             raise TypeError('Password is empty')
         if email is None:
             raise TypeError('Email is empty')
 
-        user = self.create_user(username, email, password)
+        user = self.create_user(username, email, user_type, password)
         user.is_superuser = True
         user.is_staff = True
         user.save()
@@ -42,6 +50,9 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+
+    is_company = models.BooleanField(default=False)
+    is_employee = models.BooleanField(default=False)
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
