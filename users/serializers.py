@@ -1,15 +1,13 @@
-from job_listings.models import Company
-from .models import User
-from rest_framework import serializers
 from django.contrib import auth
-from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
-from job_listings.serializers import CompanySerializer, UserSerializer
 
+from job_listings.models import Company
+from job_listings.serializers import UserSerializer
+from .models import Employee
 from .models import User
 
 
@@ -135,9 +133,9 @@ class UserCompanyTypeSerializer(serializers.ModelSerializer):
 
 class UserEmployeeTypeSerializer(serializers.ModelSerializer):
     # user = serializers.SerializerMethodField()
-    owner = UserSerializer(read_only=True)
+    user = UserSerializer(read_only=True)
 
     class Meta:
-        model = Company
-        fields = ('id', 'owner')  # 'photo'
+        model = Employee
+        fields = ('id', 'user')  # 'photo'
 

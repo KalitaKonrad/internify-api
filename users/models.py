@@ -1,6 +1,8 @@
 from django.contrib.auth.models import (
     AbstractBaseUser, BaseUserManager, PermissionsMixin)
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, BaseUserManager
@@ -71,3 +73,22 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     # def get_photo_url(self):
     #     return self.photo_url
+
+
+class Employee(models.Model):
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+
+    jobs_applied = models.ManyToManyField("job_listings.Job", blank=True)
+
+
+# this is being called every time any changes are made to the user model
+@receiver(post_save, sender=User)
+def create_link_to_user_after_user_created(sender, instance, **kwargs):
+    # this throws an exception when employee not found -> we want to assign employee object only once
+    # and the whole function is being called during every User update (save() method call)
+    try:
+        employee = Employee.objects.get(user=instance)
+    except:
+        user = User.objects.get(id=instance.id)
+        employee = Employee(user=user)
+        employee.save()
