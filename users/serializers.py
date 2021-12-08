@@ -135,7 +135,7 @@ class UserCompanyTypeSerializer(serializers.ModelSerializer):
 
 class UserEmployeeTypeSerializer(serializers.ModelSerializer):
     # user = serializers.SerializerMethodField()
-    # owner = UserSerializer
+    owner = UserSerializer(read_only=True)
 
     class Meta:
         model = Company

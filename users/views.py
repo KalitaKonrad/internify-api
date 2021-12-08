@@ -1,28 +1,25 @@
-from django.http.response import HttpResponsePermanentRedirect
+import os
+
 import jwt
 from django.conf import settings
 from django.contrib.auth.tokens import PasswordResetTokenGenerator
 from django.contrib.sites.shortcuts import get_current_site
+from django.http import HttpResponsePermanentRedirect
 from django.urls import reverse
-from drf_yasg.utils import swagger_auto_schema
 from django.utils.encoding import smart_bytes, smart_str, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from drf_yasg import openapi
 from drf_yasg.utils import swagger_auto_schema
-from rest_framework import generics, status, views
+from rest_framework import generics, status
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
-from job_listings.models import Company
+from job_listings.serializers import UserSerializer
 from .models import User
 from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, \
     ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserCompanyTypeSerializer, UserEmployeeTypeSerializer
 from .utils import Util
-from rest_framework.permissions import IsAuthenticated
-from job_listings.serializers import UserSerializer
-from django.shortcuts import redirect
-from django.http import HttpResponsePermanentRedirect
-import os
 
 
 class CustomRedirect(HttpResponsePermanentRedirect):
@@ -177,18 +174,11 @@ class CurrentUserApiView(generics.RetrieveAPIView):
 
         return super().get_serializer_class()
 
-    def get_object(self) -> Company:
-        return self.request.user.company
+    def get_object(self):
+        if self.request.user.is_company:
+            return self.request.user.company
+        elif self.request.user.is_employee:
+            return self.request.user.employee
 
-
-class CurrentCompanyUserApiView(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserCompanyTypeSerializer
-
-
-class CurrentEmployeeUserApiView(generics.RetrieveAPIView):
-    permission_classes = (IsAuthenticated,)
-    serializer_class = UserEmployeeTypeSerializer
-
-    def get_object(self) -> User:
         return self.request.user
+
