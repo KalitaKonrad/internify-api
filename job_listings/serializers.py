@@ -39,6 +39,8 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class CompanyJobOffersSerializer(serializers.ModelSerializer):
+    company = CompanySerializer(read_only=True, required=False)
+
     class Meta:
         model = Job
         fields = ('id', 'title', 'description', 'published',
