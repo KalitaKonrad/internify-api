@@ -1,16 +1,19 @@
-from django.shortcuts import render
-from rest_framework import generics, status, viewsets
-from .models import Job, Company
-from .serializers import JobSerializer, CompanySerializer, CompanyJobOffersSerializer
+from rest_framework import generics, status
 from rest_framework.permissions import IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
+
+from .models import Job, Company
 from .permissions import IsJobOwner, IsCompanyOwner
+from .serializers import JobSerializer, CompanySerializer, CompanyJobOffersSerializer
+from rest_framework import filters
 
 
 class JobList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Job.jobobjects.all()  # only published jobs
     serializer_class = JobSerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['title', 'description']
 
     def perform_create(self, serializer):
         company = self.request.user.company
@@ -41,6 +44,8 @@ class CompanyList(generics.ListCreateAPIView):
     permission_classes = (IsAuthenticatedOrReadOnly,)
     queryset = Company.objects.all()
     serializer_class = CompanySerializer
+    filter_backends = [filters.SearchFilter]
+    search_fields = ['name', 'description']
 
     def perform_create(self, serializer):
         serializer.save(owner=self.request.user)

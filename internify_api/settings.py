@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     'users',
     'rest_framework_simplejwt',
     'drf_yasg',
+    'django_filters',
 ]
 
 INTERNAL_IPS = [
@@ -158,7 +159,8 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10,
     'DEFAULT_RENDERER_CLASSES': [
         'internify_api.renderers.DefaultRenderer'
-    ]
+    ],
+    'SEARCH_PARAM': 'q'
 }
 
 CORS_ALLOWED_ORIGINS = [
