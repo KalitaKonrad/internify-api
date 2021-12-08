@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 from .models import Job, Company
 from users.models import User
@@ -6,11 +5,14 @@ from users.models import User
 
 class UserSerializer(serializers.ModelSerializer):
     # photo = serializers.URLField(source='get_photo_url')
+    user_type = serializers.SerializerMethodField()
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'is_company', 'is_employee')  # 'photo'
+        fields = ('id', 'username', 'email', 'user_type')  # 'photo'
 
+    def get_user_type(self, obj):
+        return 'is_employee' if obj.is_employee else 'is_company'
 
 class CompanySerializer(serializers.ModelSerializer):
     # var name has to be the same as string in fields
@@ -37,7 +39,6 @@ class JobSerializer(serializers.ModelSerializer):
 
 
 class CompanyJobOffersSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Job
         fields = ('id', 'title', 'description', 'published',
