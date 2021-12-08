@@ -1,3 +1,4 @@
+from job_listings.models import Company
 from .models import User
 from rest_framework import serializers
 from django.contrib import auth
@@ -7,6 +8,7 @@ from django.utils.encoding import force_str
 from django.utils.http import urlsafe_base64_decode
 from rest_framework import serializers
 from rest_framework.exceptions import AuthenticationFailed
+from job_listings.serializers import CompanySerializer, UserSerializer
 
 from .models import User
 
@@ -120,3 +122,22 @@ class SetNewPasswordSerializer(serializers.Serializer):
         except Exception as e:
 
             raise AuthenticationFailed('The reset token is invalid', 401)
+
+
+class UserCompanyTypeSerializer(serializers.ModelSerializer):
+    # user = serializers.SerializerMethodField()
+    owner = UserSerializer(read_only=True)
+
+    class Meta:
+        model = Company
+        fields = ('id', 'name', 'slug', 'owner',)  # 'photo'
+
+
+class UserEmployeeTypeSerializer(serializers.ModelSerializer):
+    # user = serializers.SerializerMethodField()
+    # owner = UserSerializer
+
+    class Meta:
+        model = Company
+        fields = ('id', 'owner')  # 'photo'
+

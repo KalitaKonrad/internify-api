@@ -13,9 +13,10 @@ from rest_framework import generics, status, views
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from job_listings.models import Company
 from .models import User
 from .serializers import RegisterSerializer, EmailVerificationSerializer, LoginSerializer, \
-    ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer
+    ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, UserCompanyTypeSerializer, UserEmployeeTypeSerializer
 from .utils import Util
 from rest_framework.permissions import IsAuthenticated
 from job_listings.serializers import UserSerializer
@@ -167,6 +168,27 @@ class SetNewPasswordAPIView(generics.GenericAPIView):
 class CurrentUserApiView(generics.RetrieveAPIView):
     permission_classes = (IsAuthenticated,)
     serializer_class = UserSerializer
+
+    def get_serializer_class(self):
+        if self.request.user.is_employee:
+            return UserEmployeeTypeSerializer
+        elif self.request.user.is_company:
+            return UserCompanyTypeSerializer
+
+        return super().get_serializer_class()
+
+    def get_object(self) -> Company:
+        return self.request.user.company
+
+
+class CurrentCompanyUserApiView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserCompanyTypeSerializer
+
+
+class CurrentEmployeeUserApiView(generics.RetrieveAPIView):
+    permission_classes = (IsAuthenticated,)
+    serializer_class = UserEmployeeTypeSerializer
 
     def get_object(self) -> User:
         return self.request.user
