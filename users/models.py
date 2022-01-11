@@ -52,6 +52,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     date_joined = models.DateTimeField(_('date joined'), default=timezone.now)
+    avatar_url = models.URLField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
 
     is_company = models.BooleanField(default=False)
     is_employee = models.BooleanField(default=False)

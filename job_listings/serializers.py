@@ -9,10 +9,12 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'user_type')  # 'photo'
+        fields = ('id', 'username', 'email',
+                  'user_type', 'avatar_url', 'description')  # 'photo'
 
     def get_user_type(self, obj):
         return 'is_employee' if obj.is_employee else 'is_company'
+
 
 class CompanySerializer(serializers.ModelSerializer):
     # var name has to be the same as string in fields

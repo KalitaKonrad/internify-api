@@ -137,5 +137,4 @@ class UserEmployeeTypeSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Employee
-        fields = ('id', 'user')  # 'photo'
-
+        fields = ('id', 'user')  # 'avatar_url'
